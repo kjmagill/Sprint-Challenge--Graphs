@@ -31,8 +31,6 @@ traversal_path = []
 
 # create a dict to store rooms
 rooms = {}
-# # create a dict to store rooms' exits
-exits = {}
 # create a dict w/ key-value pairs to programatically find inverse directions
 inverse_dir = { 'n': 's', 's': 'n', 'e': 'w', 'w': 'e' }
 # create a list to track the reverse direction for traveling backwards
@@ -41,7 +39,6 @@ reverse_path = [None]
 
 # initialize both dicts by storing key-values of the current room & its exits
 rooms[player.current_room.id] = player.current_room.get_exits()
-exits[player.current_room.id] = player.current_room.get_exits()
 
 # until the rooms dict includes all rooms from room_graph...
 while len(rooms) < len(room_graph):
@@ -50,15 +47,14 @@ while len(rooms) < len(room_graph):
     # add a list of its exits in the rooms and exits dict
     if player.current_room.id not in rooms:
         rooms[player.current_room.id] = player.current_room.get_exits()
-        exits[player.current_room.id] = player.current_room.get_exits()
 
         # grab the reverse of the last direction we traveled so that we can
         # remove this direction from potential exits out of the current room
         reverse_dir = reverse_path[-1]
-        exits[player.current_room.id].remove(reverse_dir)
+        rooms[player.current_room.id].remove(reverse_dir)
 
     # when a room has no exits, it means we've hit a dead end & must reverse course
-    while len(exits[player.current_room.id]) < 1:
+    while len(rooms[player.current_room.id]) < 1:
         # pop the last reverse-direction traveled to remove it from
         # the reverse_path list and add it to our traversal_path
         # then move the player in this reverse-direction
@@ -68,7 +64,7 @@ while len(rooms) < len(room_graph):
 
     # pop the first available exit direction to remove it from possible exits and
     # add it to our traversal_path. then add it to the end of the reverse_path list
-    exit_dir = exits[player.current_room.id].pop(0)
+    exit_dir = rooms[player.current_room.id].pop(0)
     traversal_path.append(exit_dir)
     reverse_path.append(inverse_dir[exit_dir])
 
